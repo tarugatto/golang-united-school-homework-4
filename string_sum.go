@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"regexp"
 	"strconv"
+	"strings"
 )
 
 //use these errors as appropriate, wrapping them with fmt.Errorf function
@@ -26,18 +27,31 @@ var (
 // Use the errors defined above as described, again wrapping into fmt.Errorf
 
 func StringSum(input string) (output string, err error) {
+	input = strings.TrimSpace(input)
+
 	if len(input) == 0 {
 		return "", fmt.Errorf("%w", errorEmptyInput)
-	} else {
-		reg := regexp.MustCompile("[0-9]+")
-		//fmt.Println(re.FindAllString(input, -1))
-		sum := 0
-		for _, i := range reg.FindAllString(input, -1) {
-			numb, _ := strconv.Atoi(i)
-			sum += numb
-		}
-
-		//fmt.Println(sum)
-		return strconv.Itoa(sum), nil
 	}
+	whitespaces := regexp.MustCompile("\\s")
+	input = whitespaces.ReplaceAllString(input, "")
+	correctCharacters, _ := regexp.MatchString("^[0-9\\+\\-]+$", input)
+
+	if correctCharacters != true {
+		_, e := strconv.Atoi("a")
+		return "", fmt.Errorf("got error: %w", e)
+	}
+	numbersRegexp := regexp.MustCompile("-?[0-9]+")
+	numbers := numbersRegexp.FindAllString(input, 3)
+
+	if len(numbers) != 2 {
+		return "", fmt.Errorf("got error: %w", errorNotTwoOperands)
+	}
+	numb1, _ := strconv.Atoi(numbers[0])
+	numb2, _ := strconv.Atoi(numbers[1])
+
+	result := strconv.Itoa(numb1 + numb2)
+
+	err = nil
+	fmt.Println(result)
+	return
 }
