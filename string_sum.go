@@ -27,31 +27,28 @@ var (
 // Use the errors defined above as described, again wrapping into fmt.Errorf
 
 func StringSum(input string) (output string, err error) {
-	input = strings.TrimSpace(input)
-
-	if len(input) == 0 {
+	input = strings.Join(strings.Fields(input), "")
+	if input == "" {
 		return "", fmt.Errorf("%w", errorEmptyInput)
 	}
-	whitespaces := regexp.MustCompile("\\s")
-	input = whitespaces.ReplaceAllString(input, "")
-	correctCharacters, _ := regexp.MatchString("^[0-9\\+\\-]+$", input)
 
-	if correctCharacters != true {
-		_, e := strconv.Atoi("a")
-		return "", fmt.Errorf("got error: %w", e)
+	var hasSymboleReg = regexp.MustCompile(`([+-]?[^+-]+)`)
+	symbols := hasSymboleReg.FindAllStringSubmatch(input, -1)
+	var numb []int
+
+	for _, v := range symbols {
+		value, err := strconv.Atoi(v[0])
+		if err != nil {
+			return "", fmt.Errorf("%w", err)
+		}
+		numb = append(numb, value)
 	}
-	numbersRegexp := regexp.MustCompile("-?[0-9]+")
-	numbers := numbersRegexp.FindAllString(input, 3)
 
-	if len(numbers) != 2 {
-		return "", fmt.Errorf("got error: %w", errorNotTwoOperands)
+	if len(numb) != 2 {
+		return "", fmt.Errorf("%w", errorNotTwoOperands)
 	}
-	numb1, _ := strconv.Atoi(numbers[0])
-	numb2, _ := strconv.Atoi(numbers[1])
 
-	result := strconv.Itoa(numb1 + numb2)
-
-	err = nil
+	result := strconv.Itoa(numb[0] + numb[1])
 	fmt.Println(result)
-	return
+	return result, nil
 }
