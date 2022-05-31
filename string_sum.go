@@ -2,6 +2,9 @@ package string_sum
 
 import (
 	"errors"
+	"fmt"
+	"regexp"
+	"strconv"
 )
 
 //use these errors as appropriate, wrapping them with fmt.Errorf function
@@ -23,5 +26,18 @@ var (
 // Use the errors defined above as described, again wrapping into fmt.Errorf
 
 func StringSum(input string) (output string, err error) {
-	return "", nil
+	if len(input) == 0 {
+		return "", fmt.Errorf("%w", errorEmptyInput)
+	} else {
+		reg := regexp.MustCompile("[0-9]+")
+		//fmt.Println(re.FindAllString(input, -1))
+		sum := 0
+		for _, i := range reg.FindAllString(input, -1) {
+			numb, _ := strconv.Atoi(i)
+			sum += numb
+		}
+
+		//fmt.Println(sum)
+		return strconv.Itoa(sum), nil
+	}
 }
